@@ -49,6 +49,6 @@ public class CrediarioResource {
     @ResponseStatus(HttpStatus.OK)
     public void deletarCrediario(@PathVariable Long id) {
 
-         crediarioService.deletarCrediario(id);
+        crediarioService.deletarCrediario(id);
     }
 }

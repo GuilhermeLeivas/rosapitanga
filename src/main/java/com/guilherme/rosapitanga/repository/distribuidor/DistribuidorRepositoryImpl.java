@@ -26,9 +26,9 @@ public class DistribuidorRepositoryImpl implements DistribuidorRepositoryQuery {
         CriteriaQuery<Distribuidor> query = builder.createQuery(Distribuidor.class);
 
         Root<Distribuidor> root = query.from(Distribuidor.class);
-        
+
         Predicate[] predicates = criarRestricoes(distribuidorFilter, builder, root);
-        
+
         query.where(predicates);
 
         TypedQuery<Distribuidor> queryPronta = entityManager.createQuery(query);
@@ -40,10 +40,10 @@ public class DistribuidorRepositoryImpl implements DistribuidorRepositoryQuery {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(!StringUtils.isEmpty(distribuidorFilter.getNomeEmpresa())) { // Primeiro filtro
+        if (!StringUtils.isEmpty(distribuidorFilter.getNomeEmpresa())) { // Primeiro filtro
             predicates.add(builder.like(builder
-                                            .lower(root.get("nomeEmpresa")), "%" + distribuidorFilter.getNomeEmpresa()
-                                            .toLowerCase() + "%"));
+                    .lower(root.get("nomeEmpresa")), "%" + distribuidorFilter.getNomeEmpresa()
+                    .toLowerCase() + "%"));
 
         }
         return predicates.toArray(new Predicate[predicates.size()]);

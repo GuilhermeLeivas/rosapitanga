@@ -38,7 +38,7 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery {
 
         adicionarRestricoesDePaginacao(query, pageable);
 
-        return new PageImpl<>(query.getResultList(), pageable, total(produtoFilter)) ;
+        return new PageImpl<>(query.getResultList(), pageable, total(produtoFilter));
     }
 
     private Predicate[] criarRestricoes(ProdutoFilter produtoFilter,
@@ -46,47 +46,47 @@ public class ProdutoRepositoryImpl implements ProdutoRepositoryQuery {
 
         List<Predicate> predicates = new ArrayList<>();
 
-                if(!StringUtils.isEmpty(produtoFilter.getNomeProduto())) { // Primeiro filtro
-                    predicates.add(criteriaBuilder.like(
-                            criteriaBuilder
-                                    .lower(root.get("nome")), "%" + produtoFilter.getNomeProduto()
+        if (!StringUtils.isEmpty(produtoFilter.getNomeProduto())) { // Primeiro filtro
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder
+                            .lower(root.get("nome")), "%" + produtoFilter.getNomeProduto()
                             .toLowerCase() + "%"
-                    ));
+            ));
 
-                }
+        }
 
-                if(!StringUtils.isEmpty(produtoFilter.getCodBarrasProduto())) { // Segundo filtro
-                     predicates.add(criteriaBuilder.like(
-                            criteriaBuilder
+        if (!StringUtils.isEmpty(produtoFilter.getCodBarrasProduto())) { // Segundo filtro
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder
                             .lower(root.get("codBarras")), "%" + produtoFilter.getCodBarrasProduto()
                             .toLowerCase() + "%"
             ));
-                }
+        }
 
-                if(produtoFilter.getDataDe() != null) { // Terceiro filtro
-                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(
-                            root.get("dataEntrada"), produtoFilter.getDataDe()
-                    ));
+        if (produtoFilter.getDataDe() != null) { // Terceiro filtro
+            predicates.add(criteriaBuilder.greaterThanOrEqualTo(
+                    root.get("dataEntrada"), produtoFilter.getDataDe()
+            ));
 
-                }
+        }
 
-                if(produtoFilter.getDataAte() != null) { // Quarto filtro
-                    predicates.add(criteriaBuilder.lessThanOrEqualTo(
-                            root.get("dataEntrada"), produtoFilter.getDataAte()
-                    ));
+        if (produtoFilter.getDataAte() != null) { // Quarto filtro
+            predicates.add(criteriaBuilder.lessThanOrEqualTo(
+                    root.get("dataEntrada"), produtoFilter.getDataAte()
+            ));
 
-                }
-                return predicates.toArray(new Predicate[predicates.size()]);
+        }
+        return predicates.toArray(new Predicate[predicates.size()]);
     }
 
     private void adicionarRestricoesDePaginacao(TypedQuery<Produto> query, Pageable pageable) {// Restricoes de paginacao
 
-          int pagAtual = pageable.getPageNumber();
-          int totalDeRegistrosPorPag = pageable.getPageSize();
-          int primeiroRegistroPag = pagAtual * totalDeRegistrosPorPag;
+        int pagAtual = pageable.getPageNumber();
+        int totalDeRegistrosPorPag = pageable.getPageSize();
+        int primeiroRegistroPag = pagAtual * totalDeRegistrosPorPag;
 
-            query.setFirstResult(primeiroRegistroPag);
-            query.setMaxResults(totalDeRegistrosPorPag);
+        query.setFirstResult(primeiroRegistroPag);
+        query.setMaxResults(totalDeRegistrosPorPag);
 
     }
 

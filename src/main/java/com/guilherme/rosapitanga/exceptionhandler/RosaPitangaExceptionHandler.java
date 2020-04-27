@@ -1,5 +1,6 @@
 package com.guilherme.rosapitanga.exceptionhandler;
 
+import com.guilherme.rosapitanga.exceptionhandler.exceptions.UmOuMaisProdutosNaoForamEncontrados;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -71,6 +72,15 @@ public class RosaPitangaExceptionHandler extends ResponseEntityExceptionHandler 
         List<Erro> ErroRecursoVazio = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
 
         return handleExceptionInternal(ex, ErroRecursoVazio, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({UmOuMaisProdutosNaoForamEncontrados.class})
+    public ResponseEntity<Object> handleUmOuMaisProdutoNaoEncontrado(UmOuMaisProdutosNaoForamEncontrados ex, WebRequest request) { // Recursos vazios
+
+        String mensagemDesenvolvedor = ex.getCause().toString();
+
+
+        return handleExceptionInternal(ex, null, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     private List<Erro> criarListaDeErros(@NotNull BindingResult bindingResult) { // Método responsável para buscar as mensagens de erros na validação

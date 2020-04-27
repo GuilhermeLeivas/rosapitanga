@@ -31,7 +31,7 @@ public class Venda {
     private FormaDePagamento formaDePagamento;
 
     @OneToMany(fetch = FetchType.EAGER)
-    private List<Produto> produtos;
+    private List<ItemVenda> produtos;
 
     public Long getId() {
         return id;
@@ -73,11 +73,12 @@ public class Venda {
         this.formaDePagamento = formaDePagamento;
     }
 
-    public List<Produto> getProdutos() {
+    public List<ItemVenda> getProdutos() {
         return produtos;
     }
 
-    public void setProdutos(List<Produto> produtos) {
+    public void setProdutos(List<ItemVenda> produtos) {
         this.produtos = produtos;
     }
+
 }

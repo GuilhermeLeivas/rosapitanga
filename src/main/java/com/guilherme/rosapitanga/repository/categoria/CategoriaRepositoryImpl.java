@@ -40,7 +40,7 @@ public class CategoriaRepositoryImpl implements CategoriaRepositoryQuery {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(!StringUtils.isEmpty(categoriaFilter.getNome())) { // Primeiro filtro
+        if (!StringUtils.isEmpty(categoriaFilter.getNome())) { // Primeiro filtro
             predicates.add(builder.like(builder
                     .lower(root.get("nome")), "%" + categoriaFilter.getNome()
                     .toLowerCase() + "%"));

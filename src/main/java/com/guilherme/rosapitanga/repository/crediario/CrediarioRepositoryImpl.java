@@ -38,7 +38,7 @@ public class CrediarioRepositoryImpl implements CrediarioRepositoryQuery {
 
         adicionarRestricoesDePaginacao(query, pageable);
 
-        return new PageImpl<>(query.getResultList(), pageable, total(crediarioFilter)) ;
+        return new PageImpl<>(query.getResultList(), pageable, total(crediarioFilter));
 
 
     }
@@ -48,7 +48,7 @@ public class CrediarioRepositoryImpl implements CrediarioRepositoryQuery {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(!StringUtils.isEmpty(crediarioFilter.getNome())) { // Primeiro filtro
+        if (!StringUtils.isEmpty(crediarioFilter.getNome())) { // Primeiro filtro
             predicates.add(criteriaBuilder.like(
                     criteriaBuilder
                             .lower(root.get("nome")), "%" + crediarioFilter.getNome()
@@ -57,7 +57,7 @@ public class CrediarioRepositoryImpl implements CrediarioRepositoryQuery {
 
         }
         return predicates.toArray(new Predicate[predicates.size()]);
-}
+    }
 
     private void adicionarRestricoesDePaginacao(TypedQuery<Crediario> query, Pageable pageable) {// Restricoes de paginacao
 

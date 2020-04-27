@@ -40,7 +40,7 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
         adicionarRestricoesDePaginacao(queryPronta, pageable);
 
-        return new PageImpl<>(queryPronta.getResultList(), pageable, total(vendaFilter)) ;
+        return new PageImpl<>(queryPronta.getResultList(), pageable, total(vendaFilter));
     }
 
     @Override
@@ -65,14 +65,14 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
         adicionarRestricoesDePaginacao(queryPronta, pageable);
 
-        return new PageImpl<>(queryPronta.getResultList(), pageable, total(vendaFilter)) ;
+        return new PageImpl<>(queryPronta.getResultList(), pageable, total(vendaFilter));
     }
 
     private Predicate[] criarRestricoes(VendaFilter vendaFilter, CriteriaBuilder builder, Root<Venda> root) {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if(!StringUtils.isEmpty(vendaFilter.getCodigoDaVenda())) {
+        if (!StringUtils.isEmpty(vendaFilter.getCodigoDaVenda())) {
 
             predicates.add(builder.like(
                     builder

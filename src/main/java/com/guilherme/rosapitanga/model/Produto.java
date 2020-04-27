@@ -36,10 +36,10 @@ public class Produto {
     @Size(min = 1, max = 3)
     private String tamanho;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Categoria categoria;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Distribuidor distribuidor;
 
     private String tecido;
