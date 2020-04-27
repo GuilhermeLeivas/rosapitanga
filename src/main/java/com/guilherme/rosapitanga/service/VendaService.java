@@ -4,6 +4,7 @@ import com.guilherme.rosapitanga.event.RecursoCriadoEvent;
 import com.guilherme.rosapitanga.exceptionhandler.exceptions.FailedToUpdateResourceException;
 import com.guilherme.rosapitanga.exceptionhandler.exceptions.UmOuMaisProdutosNaoForamEncontrados;
 import com.guilherme.rosapitanga.model.ItemVenda;
+import com.guilherme.rosapitanga.model.Produto;
 import com.guilherme.rosapitanga.model.Venda;
 import com.guilherme.rosapitanga.repository.CrediarioRepository;
 import com.guilherme.rosapitanga.repository.ProdutoRepository;
@@ -16,11 +17,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Service
 public class VendaService {
@@ -55,9 +61,9 @@ public class VendaService {
 
     public ResponseEntity<?> criarNovaVenda(Venda venda, HttpServletResponse response) { // Criação da venda
 
-        List<ItemVenda> produtosDaVenda = venda.getProdutos();
+        List<ItemVenda> produtosDaVenda = venda.getCarrinho().getItensDaVenda();
 
-        verificarProdutosNaVenda(produtosDaVenda);
+        verificarProdutosNoCarrinhoEAdicionarNaVenda(produtosDaVenda, venda);
         alterandoAQuantidadeDosProdutos(produtosDaVenda);
 
         if (venda.getCrediario() != null) {
@@ -79,11 +85,18 @@ public class VendaService {
 
     }
 
-    private void verificarProdutosNaVenda(List<ItemVenda> produtosDaVenda) { // Verifica se os produtos na venda existem
+    @Async
+    public void verificarProdutosNoCarrinhoEAdicionarNaVenda(List<ItemVenda> produtosDaVenda, Venda venda) { // Verifica se os produtos na venda existem
 
-            produtosDaVenda.forEach(produtoNaLista -> produtoRepository.findById(produtoNaLista.getProdutoId())
-                                                                        .orElseThrow(() -> new UmOuMaisProdutosNaoForamEncontrados(1)));
+        List<Produto> produtosEncontrados = produtosDaVenda.stream()
+                .map(produtoNaLista -> produtoRepository.findById(produtoNaLista.getProdutoId()).get())
+                .collect(Collectors.toList());
 
+        if(!produtosEncontrados.isEmpty()) {
+            venda.setProdutos(produtosEncontrados);
+            venda.setDataDeEfetuacao(LocalDate.now());
+        }
+        throw new UmOuMaisProdutosNaoForamEncontrados(1);
     }
 
     private void alterandoAQuantidadeDosProdutos(List<ItemVenda> produtosDaVenda) {

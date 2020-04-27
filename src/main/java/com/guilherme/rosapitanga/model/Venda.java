@@ -2,11 +2,14 @@ package com.guilherme.rosapitanga.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sun.istack.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -18,10 +21,11 @@ public class Venda {
     private Long id;
 
     @NotNull
-    private Date dataDeEfetuacao;
+    private LocalDate dataDeEfetuacao;
 
     private UUID codigoDaVenda;
 
+    @Nullable
     @OneToOne(optional = true)
     @JsonIgnoreProperties("vendas")
     private Crediario crediario;
@@ -30,8 +34,12 @@ public class Venda {
     @Enumerated(EnumType.STRING)
     private FormaDePagamento formaDePagamento;
 
+    @Transient
+    private Carrinho carrinho;
+
     @OneToMany(fetch = FetchType.EAGER)
-    private List<ItemVenda> produtos;
+    @Nullable
+    private List<Produto> produtos;
 
     public Long getId() {
         return id;
@@ -41,11 +49,11 @@ public class Venda {
         this.id = id;
     }
 
-    public Date getDataDeEfetuacao() {
+    public LocalDate getDataDeEfetuacao() {
         return dataDeEfetuacao;
     }
 
-    public void setDataDeEfetuacao(Date dataDeEfetuacao) {
+    public void setDataDeEfetuacao(LocalDate dataDeEfetuacao) {
         this.dataDeEfetuacao = dataDeEfetuacao;
     }
 
@@ -73,12 +81,19 @@ public class Venda {
         this.formaDePagamento = formaDePagamento;
     }
 
-    public List<ItemVenda> getProdutos() {
+    public Carrinho getCarrinho() {
+        return carrinho;
+    }
+
+    public void setCarrinho(Carrinho carrinho) {
+        this.carrinho = carrinho;
+    }
+
+    public List<Produto> getProdutos() {
         return produtos;
     }
 
-    public void setProdutos(List<ItemVenda> produtos) {
+    public void setProdutos(List<Produto> produtos) {
         this.produtos = produtos;
     }
-
 }
