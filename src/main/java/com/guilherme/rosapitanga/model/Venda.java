@@ -3,14 +3,14 @@ package com.guilherme.rosapitanga.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.Nullable;
+import org.hibernate.engine.profile.Fetch;
+import org.springframework.data.repository.cdi.Eager;
 
+import javax.annotation.processing.Generated;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "venda")
@@ -20,13 +20,12 @@ public class Venda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private LocalDate dataDeEfetuacao;
 
     private UUID codigoDaVenda;
 
     @Nullable
-    @OneToOne(optional = true)
+    @OneToOne(optional = true, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("vendas")
     private Crediario crediario;
 
@@ -37,9 +36,12 @@ public class Venda {
     @Transient
     private Carrinho carrinho;
 
-    @OneToMany(fetch = FetchType.EAGER)
     @Nullable
+    @OneToMany(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = {"categoria, distribuidor"})
     private List<Produto> produtos;
+
+    private Double valorDaCompra;
 
     public Long getId() {
         return id;
@@ -95,5 +97,13 @@ public class Venda {
 
     public void setProdutos(List<Produto> produtos) {
         this.produtos = produtos;
+    }
+
+    public Double getValorDaCompra() {
+        return valorDaCompra;
+    }
+
+    public void setValorDaCompra(Double valorDaCompra) {
+        this.valorDaCompra = valorDaCompra;
     }
 }

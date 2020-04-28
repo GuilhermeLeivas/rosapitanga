@@ -7,4 +7,9 @@ public class UmOuMaisProdutosNaoForamEncontrados extends IncorrectResultSizeData
     public UmOuMaisProdutosNaoForamEncontrados(int expectedSize) {
         super(expectedSize);
     }
+
+    @Override
+    public String getMessage() {
+        return "Um produto ou mais não foram encontrados, por favor, tente novamente";
+    }
 }

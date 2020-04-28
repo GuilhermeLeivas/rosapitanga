@@ -10,6 +10,7 @@ import com.guilherme.rosapitanga.repository.CrediarioRepository;
 import com.guilherme.rosapitanga.repository.ProdutoRepository;
 import com.guilherme.rosapitanga.repository.VendaRepository;
 import com.guilherme.rosapitanga.repository.filter.VendaFilter;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,11 +23,13 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 @Service
 public class VendaService {
@@ -59,6 +62,7 @@ public class VendaService {
         }
     }
 
+    @Async
     public ResponseEntity<?> criarNovaVenda(Venda venda, HttpServletResponse response) { // Criação da venda
 
         List<ItemVenda> produtosDaVenda = venda.getCarrinho().getItensDaVenda();
@@ -85,25 +89,42 @@ public class VendaService {
 
     }
 
-    @Async
-    public void verificarProdutosNoCarrinhoEAdicionarNaVenda(List<ItemVenda> produtosDaVenda, Venda venda) { // Verifica se os produtos na venda existem
+    private void verificarProdutosNoCarrinhoEAdicionarNaVenda(List<ItemVenda> produtosDaVenda, Venda venda) { // Verifica se os produtos na venda existem
 
-        List<Produto> produtosEncontrados = produtosDaVenda.stream()
-                .map(produtoNaLista -> produtoRepository.findById(produtoNaLista.getProdutoId()).get())
-                .collect(Collectors.toList());
 
-        if(!produtosEncontrados.isEmpty()) {
-            venda.setProdutos(produtosEncontrados);
+        try {
+            List<Optional<Produto>> products = produtosDaVenda.stream()
+                    .map(item -> produtoRepository.findById(item.getProduto().getId()))
+                    .collect(Collectors.toList());
+
+            List<Produto> produtosAchadosEVerificados = products.stream()
+                    .map(produto -> produto.get())
+                    .collect(Collectors.toList());
+
+            venda.setProdutos(produtosAchadosEVerificados);
+            venda.setValorDaCompra(totalDaVenda(produtosAchadosEVerificados, produtosDaVenda));
             venda.setDataDeEfetuacao(LocalDate.now());
+            venda.setCodigoDaVenda(UUID.randomUUID());
+
+        } catch (UmOuMaisProdutosNaoForamEncontrados e) {
+            e.getMessage();
         }
-        throw new UmOuMaisProdutosNaoForamEncontrados(1);
+    }
+
+    @NotNull
+    private Double totalDaVenda(List<Produto> produtos, List<ItemVenda> itensParaPegarQuantidade) {
+
+        BiFunction<ItemVenda, Produto, Double> somarValor = (itemVenda, produto) -> (itemVenda.getQuantidade() * produto.getPrecoVenda());
+        Double valorDaVenda = produtos.stream().mapToDouble(produto -> itensParaPegarQuantidade.stream().mapToDouble(itemVenda -> somarValor.apply(itemVenda, produto)).sum()).sum();
+
+        return valorDaVenda / 2;
     }
 
     private void alterandoAQuantidadeDosProdutos(List<ItemVenda> produtosDaVenda) {
 
         try {
             produtosDaVenda.stream()
-                       .forEach(produtoNaLista -> produtoRepository.alterarQuantidade(produtoNaLista.getProdutoId(),
+                       .forEach(produtoNaLista -> produtoRepository.alterarQuantidade(produtoNaLista.getProduto().getId(),
                                                     produtoNaLista.getQuantidade()));
         } catch (FailedToUpdateResourceException e) {
             e.printStackTrace();
