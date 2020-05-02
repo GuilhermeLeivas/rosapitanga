@@ -1,6 +1,7 @@
 package com.guilherme.rosapitanga.service;
 
 import com.guilherme.rosapitanga.event.RecursoCriadoEvent;
+import com.guilherme.rosapitanga.exceptionhandler.exceptions.ErroAoRealizarUmaVenda;
 import com.guilherme.rosapitanga.exceptionhandler.exceptions.FailedToUpdateResourceException;
 import com.guilherme.rosapitanga.exceptionhandler.exceptions.UmOuMaisProdutosNaoForamEncontrados;
 import com.guilherme.rosapitanga.model.ItemVenda;
@@ -91,31 +92,35 @@ public class VendaService {
 
     private void verificarProdutosNoCarrinhoEAdicionarNaVenda(List<ItemVenda> produtosDaVenda, Venda venda) { // Verifica se os produtos na venda existem
 
-
         try {
-            List<Optional<Produto>> products = produtosDaVenda.stream()
-                    .map(item -> produtoRepository.findById(item.getProduto().getId()))
-                    .collect(Collectors.toList());
-
-            List<Produto> produtosAchadosEVerificados = products.stream()
-                    .map(produto -> produto.get())
-                    .collect(Collectors.toList());
+            List<Produto> produtosAchadosEVerificados = procurarProdutosDentroDosItensDaVenda(produtosDaVenda);
 
             venda.setProdutos(produtosAchadosEVerificados);
             venda.setValorDaCompra(totalDaVenda(produtosAchadosEVerificados, produtosDaVenda));
             venda.setDataDeEfetuacao(LocalDate.now());
             venda.setCodigoDaVenda(UUID.randomUUID());
 
-        } catch (UmOuMaisProdutosNaoForamEncontrados e) {
-            e.getMessage();
+        } catch (ErroAoRealizarUmaVenda ex) {
+            ex.getMessage();
         }
+    }
+
+    private List<Produto> procurarProdutosDentroDosItensDaVenda(List<ItemVenda> produtosDaVenda) {
+
+        List<Long> ids = produtosDaVenda.stream()
+                .map(item -> item.getProduto().getId())
+                .collect(Collectors.toList());
+
+        return produtoRepository.acharProdutosPorListaDeIds(ids)
+                                    .orElseThrow(() -> new UmOuMaisProdutosNaoForamEncontrados(1));
     }
 
     @NotNull
     private Double totalDaVenda(List<Produto> produtos, List<ItemVenda> itensParaPegarQuantidade) {
 
         BiFunction<ItemVenda, Produto, Double> somarValor = (itemVenda, produto) -> (itemVenda.getQuantidade() * produto.getPrecoVenda());
-        Double valorDaVenda = produtos.stream().mapToDouble(produto -> itensParaPegarQuantidade.stream().mapToDouble(itemVenda -> somarValor.apply(itemVenda, produto)).sum()).sum();
+        Double valorDaVenda = produtos.stream().mapToDouble(produto ->
+                                itensParaPegarQuantidade.stream().mapToDouble(itemVenda -> somarValor.apply(itemVenda, produto)).sum()).sum();
 
         return valorDaVenda / 2;
     }

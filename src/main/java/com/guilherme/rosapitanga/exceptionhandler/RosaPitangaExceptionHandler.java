@@ -1,5 +1,6 @@
 package com.guilherme.rosapitanga.exceptionhandler;
 
+import com.guilherme.rosapitanga.exceptionhandler.exceptions.ErroAoRealizarUmaVenda;
 import com.guilherme.rosapitanga.exceptionhandler.exceptions.UmOuMaisProdutosNaoForamEncontrados;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;

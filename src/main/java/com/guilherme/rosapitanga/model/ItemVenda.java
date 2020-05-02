@@ -1,15 +1,11 @@
 package com.guilherme.rosapitanga.model;
 
-import javax.persistence.*;
 import javax.transaction.Transactional;
 
 @Transactional
 public class ItemVenda {
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
     private Produto produto;
     private Integer quantidade;
 
@@ -17,8 +13,8 @@ public class ItemVenda {
         return produto;
     }
 
-    public void setProduto(Produto produtoId) {
-        this.produto = produtoId;
+    public void setProduto(Produto produto) {
+        this.produto = produto;
     }
 
     public Integer getQuantidade() {

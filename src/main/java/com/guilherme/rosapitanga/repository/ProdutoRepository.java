@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProdutoRepository extends JpaRepository<Produto, Long>, ProdutoRepositoryQuery {
@@ -18,6 +19,9 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long>, Produto
     @Modifying
     @Query("UPDATE Produto p set p.quantidade = p.quantidade - :quantidade WHERE p.id = :produtoId")
     public void alterarQuantidade(@Param("produtoId") Long produtoId, @Param("quantidade") Integer quantidade);
+
+    @Query(value = "select * from produto where id in :ids", nativeQuery = true)
+    public Optional<List<Produto>> acharProdutosPorListaDeIds(@Param("ids") List<Long> ids);
 
 
 }
