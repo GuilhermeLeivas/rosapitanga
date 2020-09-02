@@ -33,13 +33,13 @@ public class Produto {
     private Double precoVenda;
 
     @NotNull
-    @Size(min = 1, max = 3)
+    @Size(min = 1, max = 4)
     private String tamanho;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Categoria categoria;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Distribuidor distribuidor;
 
     private String tecido;

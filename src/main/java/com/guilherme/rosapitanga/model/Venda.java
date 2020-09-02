@@ -3,10 +3,7 @@ package com.guilherme.rosapitanga.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.Nullable;
-import org.hibernate.engine.profile.Fetch;
-import org.springframework.data.repository.cdi.Eager;
 
-import javax.annotation.processing.Generated;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

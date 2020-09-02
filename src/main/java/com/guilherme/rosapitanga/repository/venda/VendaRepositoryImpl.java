@@ -1,5 +1,6 @@
 package com.guilherme.rosapitanga.repository.venda;
 
+import com.guilherme.rosapitanga.dto.VendasEstatisticasMes;
 import com.guilherme.rosapitanga.model.Venda;
 import com.guilherme.rosapitanga.repository.filter.VendaFilter;
 import com.guilherme.rosapitanga.repository.projection.ResumoVenda;
@@ -15,6 +16,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,33 @@ public class VendaRepositoryImpl implements VendaRepositoryQuery {
 
     @PersistenceContext
     private EntityManager manager;
+
+    @Override
+    public List<VendasEstatisticasMes> porMes(LocalDate mesReferente) { // Dados estatísticos por mês das vendas
+        CriteriaBuilder builder = manager.getCriteriaBuilder();
+
+        CriteriaQuery<VendasEstatisticasMes> query = builder.createQuery(VendasEstatisticasMes.class);
+        Root<Venda> root = query.from(Venda.class);
+
+        query.select(builder.construct(VendasEstatisticasMes.class,
+                                                        root.get("formaPagamento"),
+                                                        builder.sum(root.get("valorDaCompra"))));
+
+        LocalDate primeiroDia = mesReferente.withDayOfMonth(1);
+        LocalDate ultimoDia = mesReferente.withDayOfMonth(mesReferente.lengthOfMonth());
+
+        query.where(
+                builder.greaterThanOrEqualTo(root.get("DataDeEfetuacao"), primeiroDia),
+                builder.lessThanOrEqualTo(root.get("DataDeEfetuacao"), ultimoDia)
+        );
+
+        query.groupBy(root.get("formaPagamento"),
+                      root.get("dataDeEfetuacao"));
+
+        TypedQuery<VendasEstatisticasMes> typedQuery = manager.createQuery(query);
+
+        return typedQuery.getResultList();
+    }
 
     @Override
     public Page<Venda> filtrarEPaginarVendas(VendaFilter vendaFilter, Pageable pageable) {

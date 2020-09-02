@@ -3,6 +3,7 @@ package com.guilherme.rosapitanga.resource;
 import com.guilherme.rosapitanga.model.Produto;
 import com.guilherme.rosapitanga.repository.filter.ProdutoFilter;
 import com.guilherme.rosapitanga.service.ProdutoService;
+import com.sun.istack.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +23,7 @@ public class ProdutoResource {
     private ProdutoService produtoService;
 
     @GetMapping
-    public Page<Produto> buscarTodosProdutosOuPesquisar(ProdutoFilter produtoFilter, Pageable pageable) {
+    public Page<Produto> buscarTodosProdutosOuPesquisar(@Nullable ProdutoFilter produtoFilter, Pageable pageable) {
 
         return produtoService.todosProdutosOuPesquisar(produtoFilter, pageable);
     }

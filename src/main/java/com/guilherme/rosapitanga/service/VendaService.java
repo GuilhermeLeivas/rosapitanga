@@ -116,7 +116,7 @@ public class VendaService {
     }
 
     @NotNull
-    private Double totalDaVenda(List<Produto> produtos, List<ItemVenda> itensParaPegarQuantidade) {
+    private Double totalDaVenda(List<Produto> produtos, List<ItemVenda> itensParaPegarQuantidade) { //TODO: Melhorar isso
 
         BiFunction<ItemVenda, Produto, Double> somarValor = (itemVenda, produto) -> (itemVenda.getQuantidade() * produto.getPrecoVenda());
         Double valorDaVenda = produtos.stream().mapToDouble(produto ->

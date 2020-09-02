@@ -16,8 +16,8 @@ public class Distribuidor {
     @NotNull
     private String nomeEmpresa;
 
-    @CNPJ
     @NotNull
+    @CNPJ
     private String cnpj;
 
     private String contato;
