@@ -22,7 +22,7 @@ public class Venda {
     private UUID codigoDaVenda;
 
     @Nullable
-    @OneToOne(optional = true, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("vendas")
     private Crediario crediario;
 
@@ -34,7 +34,10 @@ public class Venda {
     private Carrinho carrinho;
 
     @Nullable
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "venda_produto",
+                joinColumns = @JoinColumn(name = "venda_id"),
+                inverseJoinColumns = @JoinColumn(name = "produto_id"))
     @JsonIgnoreProperties(value = {"categoria, distribuidor"})
     private List<Produto> produtos;
 
