@@ -1,11 +1,25 @@
 package com.guilherme.rosapitanga.model;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
 public enum FormaDePagamento {
 
     DINHEIRO,
     CARTAO,
-    CREDIARIO
+    CREDIARIO;
+
+    public String getDescricao() {
+        String s = "";
+
+        switch (this) {
+            case DINHEIRO:
+                s = "Dinheiro";
+                break;
+            case CARTAO:
+                s = "Cartão";
+                break;
+            case CREDIARIO:
+                s = "Crediário";
+                break;
+        }
+        return s;
+    }
 }

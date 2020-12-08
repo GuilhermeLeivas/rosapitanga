@@ -30,8 +30,8 @@ public class Venda {
     private Crediario crediario;
 
     @NotNull
-    @Enumerated
     @Column
+    @Enumerated(EnumType.ORDINAL)
     private FormaDePagamento formaDePagamento;
 
     @Nullable
@@ -87,7 +87,6 @@ public class Venda {
     public void setFormaDePagamento(FormaDePagamento formaDePagamento) {
         this.formaDePagamento = formaDePagamento;
     }
-
 
     public List<Produto> getProdutos() {
         return produtos;
