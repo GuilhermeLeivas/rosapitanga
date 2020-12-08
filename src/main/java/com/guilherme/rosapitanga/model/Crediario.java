@@ -15,23 +15,13 @@ public class Crediario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private String nome;
+    @OneToOne
+    @JoinColumn(name = "PESSOAID", referencedColumnName = "ID")
+    private Pessoa pessoa;
 
-    @NotNull
-    private String cpfOuCnpj;
-
-    @Embedded
+    @OneToOne
+    @JoinColumn(name = "ENDERECOID", referencedColumnName = "ID")
     private Endereco endereco;
-
-    private String contato;
-
-    @Email
-    private String email;
-
-    @OneToMany(mappedBy = "crediario")
-    @JsonIgnoreProperties("crediario")
-    private List<Venda> vendas;
 
     public Long getId() {
         return id;
@@ -41,20 +31,12 @@ public class Crediario {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public Pessoa getPessoa() {
+        return pessoa;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpfOuCnpj() {
-        return cpfOuCnpj;
-    }
-
-    public void setCpfOuCnpj(String cpfOuCnpj) {
-        this.cpfOuCnpj = cpfOuCnpj;
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
     }
 
     public Endereco getEndereco() {
@@ -63,29 +45,5 @@ public class Crediario {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
-    }
-
-    public String getContato() {
-        return contato;
-    }
-
-    public void setContato(String contato) {
-        this.contato = contato;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Venda> getVendas() {
-        return vendas;
-    }
-
-    public void setVendas(List<Venda> vendas) {
-        this.vendas = vendas;
     }
 }

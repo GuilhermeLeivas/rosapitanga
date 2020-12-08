@@ -15,35 +15,46 @@ public class Produto {
     private Long id;
 
     @NotNull
+    @Column
     private String nome;
 
     @NotNull
+    @Column
     private String codBarras;
 
     @NotNull
+    @Column
     private Integer quantidade;
 
     @NotNull
+    @Column
     private Date dataEntrada;
 
     @NotNull
+    @Column
     private Double precoCusto;
 
     @NotNull
+    @Column
     private Double precoVenda;
 
     @NotNull
     @Size(min = 1, max = 4)
+    @Column
     private String tamanho;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CATEGORIAID", referencedColumnName = "ID")
     private Categoria categoria;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DISTRIBUIDORID", referencedColumnName = "ID")
     private Distribuidor distribuidor;
 
+    @Column
     private String tecido;
 
+    @Column
     private String descricao;
 
     public Long getId() {

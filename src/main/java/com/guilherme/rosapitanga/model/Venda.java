@@ -17,31 +17,36 @@ public class Venda {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private LocalDate dataDeEfetuacao;
 
+    @Column
     private UUID codigoDaVenda;
 
     @Nullable
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JsonIgnoreProperties("vendas")
+    @JoinColumn(name = "CREDIARIOID", referencedColumnName = "ID", nullable = true)
     private Crediario crediario;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
+    @Enumerated
+    @Column
     private FormaDePagamento formaDePagamento;
-
-    @Transient
-    private Carrinho carrinho;
 
     @Nullable
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "venda_produto",
-                joinColumns = @JoinColumn(name = "venda_id"),
-                inverseJoinColumns = @JoinColumn(name = "produto_id"))
+            joinColumns = @JoinColumn(name = "venda_id"),
+            inverseJoinColumns = @JoinColumn(name = "produto_id"))
     @JsonIgnoreProperties(value = {"categoria, distribuidor"})
     private List<Produto> produtos;
 
+    @Column
     private Double valorDaCompra;
+
+    @Transient
+    private Carrinho carrinho;
 
     public Long getId() {
         return id;
@@ -83,13 +88,6 @@ public class Venda {
         this.formaDePagamento = formaDePagamento;
     }
 
-    public Carrinho getCarrinho() {
-        return carrinho;
-    }
-
-    public void setCarrinho(Carrinho carrinho) {
-        this.carrinho = carrinho;
-    }
 
     public List<Produto> getProdutos() {
         return produtos;
@@ -105,5 +103,13 @@ public class Venda {
 
     public void setValorDaCompra(Double valorDaCompra) {
         this.valorDaCompra = valorDaCompra;
+    }
+
+    public Carrinho getCarrinho() {
+        return carrinho;
+    }
+
+    public void setCarrinho(Carrinho carrinho) {
+        this.carrinho = carrinho;
     }
 }

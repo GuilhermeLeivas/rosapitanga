@@ -14,12 +14,15 @@ public class Distribuidor {
     private Long id;
 
     @NotNull
+    @Column
     private String nomeEmpresa;
 
     @NotNull
     @CNPJ
+    @Column
     private String cnpj;
 
+    @Column
     private String contato;
 
     public Long getId() {

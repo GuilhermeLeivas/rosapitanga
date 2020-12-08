@@ -11,7 +11,6 @@ import com.guilherme.rosapitanga.repository.CrediarioRepository;
 import com.guilherme.rosapitanga.repository.ProdutoRepository;
 import com.guilherme.rosapitanga.repository.VendaRepository;
 import com.guilherme.rosapitanga.repository.filter.VendaFilter;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -27,10 +26,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.BiFunction;
-import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
 
 @Service
 public class VendaService {
@@ -68,7 +64,7 @@ public class VendaService {
 
         List<ItemVenda> produtosDaVenda = venda.getCarrinho().getItensDaVenda();
 
-        verificarProdutosNoCarrinhoEAdicionarNaVenda(produtosDaVenda, venda);
+        montaNovaVenda(produtosDaVenda, venda);
         alterandoAQuantidadeDosProdutos(produtosDaVenda);
 
         if (venda.getCrediario() != null) {
@@ -90,10 +86,10 @@ public class VendaService {
 
     }
 
-    private void verificarProdutosNoCarrinhoEAdicionarNaVenda(List<ItemVenda> produtosDaVenda, Venda venda) { // Verifica se os produtos na venda existem
+    private void montaNovaVenda(List<ItemVenda> produtosDaVenda, Venda venda) { // Verifica se os produtos na venda existem
 
         try {
-            List<Produto> produtosAchadosEVerificados = procurarProdutosDentroDosItensDaVenda(produtosDaVenda);
+            List<Produto> produtosAchadosEVerificados = verificaProdutosDaVenda(produtosDaVenda);
 
             venda.setProdutos(produtosAchadosEVerificados);
             venda.setValorDaCompra(totalDaVenda(produtosDaVenda));
@@ -105,7 +101,8 @@ public class VendaService {
         }
     }
 
-    private List<Produto> procurarProdutosDentroDosItensDaVenda(List<ItemVenda> produtosDaVenda) {
+    private List<Produto> verificaProdutosDaVenda(List<ItemVenda> produtosDaVenda) {
+        //TODO: Fazer com que mesmo se não achar UM produto, os outros sejam trazidos
 
         List<Long> ids = produtosDaVenda.stream()
                 .map(item -> item.getProduto().getId())
@@ -115,7 +112,7 @@ public class VendaService {
                                     .orElseThrow(() -> new UmOuMaisProdutosNaoForamEncontrados(1));
     }
 
-    private Double totalDaVenda(List<ItemVenda> itensVenda) { //TODO: Melhorar isso
+    private Double totalDaVenda(List<ItemVenda> itensVenda) {
         Double valorDaVenda = 0.0;
        for(ItemVenda item : itensVenda) {
            Optional<Produto> produtoItem = produtoRepository.findById(item.getProduto().getId());
@@ -127,7 +124,6 @@ public class VendaService {
     }
 
     private void alterandoAQuantidadeDosProdutos(List<ItemVenda> produtosDaVenda) {
-
         try {
             produtosDaVenda.stream()
                        .forEach(produtoNaLista -> produtoRepository.alterarQuantidade(produtoNaLista.getProduto().getId(),
