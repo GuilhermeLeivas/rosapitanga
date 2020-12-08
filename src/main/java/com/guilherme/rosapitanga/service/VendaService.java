@@ -96,7 +96,7 @@ public class VendaService {
             List<Produto> produtosAchadosEVerificados = procurarProdutosDentroDosItensDaVenda(produtosDaVenda);
 
             venda.setProdutos(produtosAchadosEVerificados);
-            venda.setValorDaCompra(totalDaVenda(produtosAchadosEVerificados, produtosDaVenda));
+            venda.setValorDaCompra(totalDaVenda(produtosDaVenda));
             venda.setDataDeEfetuacao(LocalDate.now());
             venda.setCodigoDaVenda(UUID.randomUUID());
 
@@ -115,14 +115,15 @@ public class VendaService {
                                     .orElseThrow(() -> new UmOuMaisProdutosNaoForamEncontrados(1));
     }
 
-    @NotNull
-    private Double totalDaVenda(List<Produto> produtos, List<ItemVenda> itensParaPegarQuantidade) { //TODO: Melhorar isso
-
-        BiFunction<ItemVenda, Produto, Double> somarValor = (itemVenda, produto) -> (itemVenda.getQuantidade() * produto.getPrecoVenda());
-        Double valorDaVenda = produtos.stream().mapToDouble(produto ->
-                                itensParaPegarQuantidade.stream().mapToDouble(itemVenda -> somarValor.apply(itemVenda, produto)).sum()).sum();
-
-        return valorDaVenda / 2;
+    private Double totalDaVenda(List<ItemVenda> itensVenda) { //TODO: Melhorar isso
+        Double valorDaVenda = 0.0;
+       for(ItemVenda item : itensVenda) {
+           Optional<Produto> produtoItem = produtoRepository.findById(item.getProduto().getId());
+           if(produtoItem.isPresent()) {
+               valorDaVenda += produtoItem.get().getPrecoVenda() * item.getQuantidade();
+           }
+       }
+        return valorDaVenda;
     }
 
     private void alterandoAQuantidadeDosProdutos(List<ItemVenda> produtosDaVenda) {
