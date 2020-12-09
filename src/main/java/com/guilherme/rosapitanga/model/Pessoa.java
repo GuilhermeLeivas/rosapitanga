@@ -16,8 +16,8 @@ public class Pessoa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
     @NotNull
+    @Column
     private String nome;
 
     @OneToOne
@@ -25,24 +25,24 @@ public class Pessoa {
     @NotNull
     private Endereco endereco;
 
-    @Column
     @NotNull
+    @Column
     private String contato;
 
     @Email
     @Column
     private String email;
 
-    @Column
     @NotNull
+    @Column
     private LocalDate dataCadastro;
 
-    @Column
     @NotNull
+    @Column
     private LocalDate dataNascimento;
 
-    @Column
     @NotNull
+    @Column
     private char sexo;
 
     public Long getId() {

@@ -8,7 +8,6 @@ public enum FormaDePagamento {
 
     public String getDescricao() {
         String s = "";
-
         switch (this) {
             case DINHEIRO:
                 s = "Dinheiro";

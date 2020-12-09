@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.br.CPF;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "PESSOAFISICA")
@@ -15,20 +16,20 @@ public class PessoaFisica extends Pessoa {
     private Long id;
 
     @CPF
-    @Column
     @NotNull
+    @Column(unique = true)
     private String cpf;
 
-    @Column
     @NotNull
+    @Column(unique = true)
     private String RG;
 
-    @Column
     @NotNull
+    @Column
     private LocalDate dtEmissaoRG;
 
-    @Column
     @NotNull
+    @Column
     private String orgaoEmissorRG;
 
     @Column
@@ -106,5 +107,19 @@ public class PessoaFisica extends Pessoa {
 
     public void setNaturalidade(Municipio naturalidade) {
         this.naturalidade = naturalidade;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        PessoaFisica that = (PessoaFisica) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id);
     }
 }

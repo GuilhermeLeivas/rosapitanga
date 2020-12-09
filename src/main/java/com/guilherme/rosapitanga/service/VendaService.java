@@ -102,8 +102,6 @@ public class VendaService {
     }
 
     private List<Produto> verificaProdutosDaVenda(List<ItemVenda> produtosDaVenda) {
-        //TODO: Fazer com que mesmo se não achar UM produto, os outros sejam trazidos
-
         List<Long> ids = produtosDaVenda.stream()
                 .map(item -> item.getProduto().getId())
                 .collect(Collectors.toList());
